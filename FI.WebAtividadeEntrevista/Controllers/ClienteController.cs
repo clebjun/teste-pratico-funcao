@@ -16,17 +16,17 @@ namespace WebAtividadeEntrevista.Controllers
             return View();
         }
 
-
         public ActionResult Incluir()
         {
             return View();
         }
 
         [HttpPost]
-        public JsonResult Incluir(ClienteModel model)
+        public JsonResult Incluir(ClienteModel model, IEnumerable<BeneficiarioModel> listOfBeneficiarioModel)
         {
             BoCliente bo = new BoCliente();
-            
+            BoBeneficiario boBene = new BoBeneficiario();
+                        
             if (!this.ModelState.IsValid)
             {
                 List<string> erros = (from item in ModelState.Values
@@ -38,21 +38,45 @@ namespace WebAtividadeEntrevista.Controllers
             }
             else
             {
-                
-                model.Id = bo.Incluir(new Cliente()
-                {                    
-                    CEP = model.CEP,
-                    Cidade = model.Cidade,
-                    Email = model.Email,
-                    Estado = model.Estado,
-                    Logradouro = model.Logradouro,
-                    Nacionalidade = model.Nacionalidade,
-                    Nome = model.Nome,
-                    Sobrenome = model.Sobrenome,
-                    Telefone = model.Telefone
-                });
 
-           
+                if (bo.VerificarExistencia(model.CPF))
+                {
+                    Response.StatusCode = 400;
+                    return Json("CPF já cadastrado!");
+                }
+
+                if (bo.VerificarCPF(model.CPF))
+                {
+                    model.Id = bo.Incluir(new Cliente()
+                    {
+                        CEP = model.CEP,
+                        Cidade = model.Cidade,
+                        CPF = model.CPF,
+                        Email = model.Email,
+                        Estado = model.Estado,
+                        Logradouro = model.Logradouro,
+                        Nacionalidade = model.Nacionalidade,
+                        Nome = model.Nome,
+                        Sobrenome = model.Sobrenome,
+                        Telefone = model.Telefone
+                    });
+
+                    foreach (var item in listOfBeneficiarioModel)
+                    {
+                        item.Id = boBene.Incluir(new Beneficiario()
+                        {
+                            CPF = item.CPF,
+                            Nome = item.Nome,
+                            IdCliente = model.Id
+                        });
+                    }
+                }
+                else
+                {
+                    Response.StatusCode = 400;
+                    return Json("CPF Inválido!");
+                }
+                
                 return Json("Cadastro efetuado com sucesso");
             }
         }
@@ -78,6 +102,7 @@ namespace WebAtividadeEntrevista.Controllers
                     Id = model.Id,
                     CEP = model.CEP,
                     Cidade = model.Cidade,
+                    CPF = model.CPF,
                     Email = model.Email,
                     Estado = model.Estado,
                     Logradouro = model.Logradouro,
@@ -105,6 +130,7 @@ namespace WebAtividadeEntrevista.Controllers
                     Id = cliente.Id,
                     CEP = cliente.CEP,
                     Cidade = cliente.Cidade,
+                    CPF = cliente.CPF,
                     Email = cliente.Email,
                     Estado = cliente.Estado,
                     Logradouro = cliente.Logradouro,
@@ -140,6 +166,34 @@ namespace WebAtividadeEntrevista.Controllers
 
                 //Return result to jTable
                 return Json(new { Result = "OK", Records = clientes, TotalRecordCount = qtd });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { Result = "ERROR", Message = ex.Message });
+            }
+        }
+
+
+        [HttpPost]
+        public JsonResult BeneficiarioList(int jtStartIndex = 0, int jtPageSize = 0, string jtSorting = null)
+        {
+            try
+            {
+                int qtd = 0;
+                string campo = string.Empty;
+                string crescente = string.Empty;
+                string[] array = jtSorting.Split(' ');
+
+                if (array.Length > 0)
+                    campo = array[0];
+
+                if (array.Length > 1)
+                    crescente = array[1];
+
+                List<Beneficiario> beneficiarios = new BoBeneficiario().Pesquisa(jtStartIndex, jtPageSize, campo, crescente.Equals("ASC", StringComparison.InvariantCultureIgnoreCase), out qtd);
+
+                //Return result to jTable
+                return Json(new { Result = "OK", Records = beneficiarios, TotalRecordCount = qtd });
             }
             catch (Exception ex)
             {

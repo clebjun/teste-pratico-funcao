@@ -26,6 +26,13 @@ namespace WebAtividadeEntrevista.Models
         public string Cidade { get; set; }
 
         /// <summary>
+        /// CPF
+        /// </summary>
+        ///[RegularExpression(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$", ErrorMessage ="Digite um CPF válido!")]
+        [Required]
+        public string CPF { get; set; }
+
+        /// <summary>
         /// E-mail
         /// </summary>
         [RegularExpression(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$", ErrorMessage = "Digite um e-mail válido")]
@@ -66,6 +73,8 @@ namespace WebAtividadeEntrevista.Models
         /// Telefone
         /// </summary>
         public string Telefone { get; set; }
+
+        public List<BeneficiarioModel> listOfBeneficiarioModel { get; set; }
 
     }    
 }

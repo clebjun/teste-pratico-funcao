@@ -1,18 +1,24 @@
 ﻿
 <form id="formCadastro" method="post">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
             <div class="form-group">
                 <label for="Nome">Nome:</label>
                 <input required="required" type="text" class="form-control" id="Nome" name="Nome" placeholder="Ex.: João" maxlength="50">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="Sobrenome">Sobrenome:</label>
+                <input required="required" type="text" class="form-control" id="Sobrenome" name="Sobrenome" placeholder="Ex.: da Silva" maxlength="255">
             </div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
-                <label for="Sobrenome">Sobrenome:</label>
-                <input required="required" type="text" class="form-control" id="Sobrenome" name="Sobrenome" placeholder="Ex.: da Silva" maxlength="255">
+                <label for="CPF">CPF:</label>
+                <input required="required" type="text" class="form-control" id="CPF" name="CPF" placeholder="Ex.: 999.999.999-99" maxlength="14">
             </div>
         </div>
         <div class="col-md-6">
@@ -74,12 +80,63 @@
 
     <div class="row">
         <div class="col-lg-12">
+            <div class="pull-left">
+                <!--<button type="submit" class="btn btn-sm">Beneficiários</button>-->
+                <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#beneficiarioModal">Beneficiários</button>
+            </div>
             <div class="pull-right">
-                <button type="submit" class="btn btn-sm btn-success">Salvar</button>
+                <button type="submit" class="btn btn-sm btn-success" id="btnSalvar">Salvar</button>
                 @Html.ActionLink("Voltar", "Index", "Cliente", new { }, new { @class = "btn btn-sm btn-danger" })
             </div>
         </div>
     </div>
 
+    <div class="row">
+        <div class="modal fade" id="beneficiarioModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Beneficiários</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="CPFBene">CPF:</label>
+                                <input  type="text" class="form-control" id="CPFBeneficiario" name="CPFBeneficiario" placeholder="Ex.: 999.999.999-99" maxlength="14">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="NOMEBene">Nome:</label>
+                                <input type="text" class="form-control" id="NomeBeneficiario" name="NomeBeneficiario" placeholder="Ex.: João" maxlength="50">
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-success" id="incluirBeneficiario">Incluir</button>
+
+                    </div>
+
+                    <table id="beneficiarios-table" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">CPF</th>
+                                <th scope="col">Nome</th>
+                                <!--as linhas são adicionadas aqui -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </form>
+

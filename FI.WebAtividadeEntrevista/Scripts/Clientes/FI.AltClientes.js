@@ -1,8 +1,10 @@
-﻿
+﻿var listBeneficiarios = new Array();
+
 $(document).ready(function () {
     if (obj) {
         $('#formCadastro #Nome').val(obj.Nome);
         $('#formCadastro #CEP').val(obj.CEP);
+        $('#formCadastro #CPF').val(obj.CPF);
         $('#formCadastro #Email').val(obj.Email);
         $('#formCadastro #Sobrenome').val(obj.Sobrenome);
         $('#formCadastro #Nacionalidade').val(obj.Nacionalidade);
@@ -14,13 +16,15 @@ $(document).ready(function () {
 
     $('#formCadastro').submit(function (e) {
         e.preventDefault();
-        
+        SalvarRegistroClientesBeneficiarios();
+
         $.ajax({
             url: urlPost,
             method: "POST",
             data: {
                 "NOME": $(this).find("#Nome").val(),
                 "CEP": $(this).find("#CEP").val(),
+                "CPF": $(this).find("#CPF").val(),
                 "Email": $(this).find("#Email").val(),
                 "Sobrenome": $(this).find("#Sobrenome").val(),
                 "Nacionalidade": $(this).find("#Nacionalidade").val(),
@@ -69,4 +73,64 @@ function ModalDialog(titulo, texto) {
 
     $('body').append(texto);
     $('#' + random).modal('show');
+}
+
+
+//Adiciona um Beneficiários no modal
+$("#incluirBeneficiario").click(function () {
+
+    var newRow = $("<tr>");
+    var cols = "";
+    var nome = $("#NomeBeneficiario").val();
+    var cpf = $("#CPFBeneficiario").val();
+
+    cols += '<td>' + cpf + '</td>';
+    cols += '<td>' + nome + '</td>';
+
+    cols += '<td>';
+    cols += '<button onclick="editar(this)" type="button" class="btn btn-sm btn-primary">Alterar</button>';
+    cols += '</td>';
+
+    cols += '<td>';
+    cols += '<button onclick="remove(this)" type="button" class="btn btn-sm btn-primary">Excluir</button>';
+    cols += '</td>';
+    cols += '</tr>';
+
+    newRow.append(cols);
+    $("#beneficiarios-table").append(newRow);
+
+    $("#NomeBeneficiario").val('');
+    $("#CPFBeneficiario").val('');
+
+});
+
+//Remove a linha do modal Beneficiários
+(function ($) {
+
+    remove = function (item) {
+
+        var tr = $(item).closest('tr');
+        tr.fadeOut(400, function () {
+            tr.remove();
+        });
+        return false;
+    }
+})(jQuery);
+
+//Grava um list de beneficiários
+function SalvarRegistroClientesBeneficiarios() {
+    $("#beneficiarios-table").find("tr:gt(0)").each(function () {
+
+        var cpf = $(this).find("td:eq(0)").text();
+        var nome = $(this).find("td:eq(1)").text();
+
+        var BeneficiarioModel = {};
+
+        BeneficiarioModel.CPF = cpf;
+        BeneficiarioModel.Nome = nome;
+
+        listBeneficiarios.push(BeneficiarioModel);
+    });
+
+
 }
